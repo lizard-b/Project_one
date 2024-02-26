@@ -58,3 +58,4 @@ def game_process():
 
 print('Классическая игра в крестики-нолики.')
 game_process()
+input('Для выхода нажмите любую клавишу Enter')
