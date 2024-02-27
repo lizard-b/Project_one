@@ -3,11 +3,11 @@ board_size = 3
 
 
 def board_out():
-    print('_' * 4 * board_size)
+    print('_' + '_' * 4 * board_size)
     for i in range(board_size):
-        print('', board[i*3], '|', board[1 + i*3],
+        print('|', board[i*3], '|', board[1 + i*3],
               '|', board[2 + i*3], '|')
-        print(('_' * 3 + '|') * 3)
+        print('|' + ('_' * 3 + '|') * 3)
 
 
 def game_phase(option, char):
