@@ -31,16 +31,22 @@ def win_check():
 
 
 def game_process():
+    option = 0
     current_player = 'X'
     step = 1
     board_out()
 
     while step < 10 and win_check() is False:
-        option = input('Ход игрока ' + current_player +
-                       '. Введите номер поля (0 - закончить игру): ')
-        if option == '0':
+        while True:
+            try:
+                option = int(input(f'Ход игрока ' + current_player + ' . Введите номер поля (0 - закончить игру): '))
+                if 0 <= option <= 9:
+                    break
+            except ValueError:
+                print('Ошибка, ввести можно только номер поля от 1 до 9.')
+        if option == 0:
             break
-        if game_phase(int(option), current_player):
+        if game_phase(option, current_player):
             print('Выбор сделан.')
             if current_player == 'X':
                 current_player = 'O'
@@ -52,6 +58,8 @@ def game_process():
             print('Ошибка, поле уже занято, выберите другое.')
     if step == 10:
         print('Игра закончилась ничьей.')
+    elif option == 0:
+        print('Игра завершена пользователем. Ждем вас снова!')
     else:
         print('Игрок ', win_check(), ' выиграл. Поздравляем!')
 
