@@ -19,10 +19,12 @@ class Color:
         return self.color + self.text + reset
 
 
-empty_cell = Color('○', purple).set_color()
-ship_cell = Color('■', blue).set_color()
-destroyed_ship = Color('×', red).set_color()
-miss_cell = Color('•', miss).set_color()
+class Sigh(object):
+
+    empty_cell = Color('○', purple).set_color()
+    ship_cell = Color('■', blue).set_color()
+    destroyed_ship = Color('×', red).set_color()
+    miss_cell = Color('•', miss).set_color()
 
 
 class BoardException(Exception):
@@ -90,7 +92,7 @@ class Board:
 
         self.count = 0
 
-        self.field = [[empty_cell] * size for _ in range(size)]
+        self.field = [[Sigh.empty_cell] * size for _ in range(size)]
 
         self.busy = []
         self.ships = []
@@ -102,7 +104,7 @@ class Board:
             res += f"\n{i + 1} | " + " | ".join(row) + " |"
 
         if self.hid:
-            res = res.replace("■", empty_cell)
+            res = res.replace("■", Sigh.empty_cell)
         return res
 
     def out(self, d):
@@ -119,7 +121,7 @@ class Board:
                 cur = Dot(d.x + dx, d.y + dy)
                 if not (self.out(cur)) and cur not in self.busy:
                     if status:
-                        self.field[cur.x][cur.y] = miss_cell
+                        self.field[cur.x][cur.y] = Sigh.miss_cell
                     self.busy.append(cur)
 
     def add_ship(self, ship):
@@ -127,7 +129,7 @@ class Board:
             if self.out(d) or d in self.busy:
                 raise BoardWrongShipException()
         for d in ship.dots:
-            self.field[d.x][d.y] = ship_cell
+            self.field[d.x][d.y] = Sigh.ship_cell
             self.busy.append(d)
 
         self.ships.append(ship)
@@ -145,7 +147,7 @@ class Board:
         for ship in self.ships:
             if d in ship.dots:
                 ship.lives -= 1
-                self.field[d.x][d.y] = destroyed_ship
+                self.field[d.x][d.y] = Sigh.destroyed_ship
                 if ship.lives == 0:
                     self.count += 1
                     self.contour(ship, status=True)
@@ -155,7 +157,7 @@ class Board:
                     print("Попадание!")
                     return True
 
-        self.field[d.x][d.y] = miss_cell
+        self.field[d.x][d.y] = Sigh.miss_cell
         print("Мимо!")
         return False
 
@@ -242,7 +244,7 @@ class Game:
             ○ - вода
             × - попадание
         """
-        print(welcome)
+        print(Color(welcome, red).set_color())
         print(text)
         print(marks)
         input('\n\tНажмите -= Enter =- для старта')
