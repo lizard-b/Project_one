@@ -1,31 +1,26 @@
 from random import randint
-from time import sleep
 
 BOARD_SIZE = 6
 SHIPS_TYPES = [3, 2, 2, 1, 1, 1, 1]
 
 
 class BoardException(Exception):
-
     pass
 
 
 class BoardOutException(BoardException):
 
     def __str__(self) -> str:
-
         return '\n\tЭта точка за пределами игровой доски!\n'
 
 
 class BoardUsedException(BoardException):
 
     def __str__(self) -> str:
-
         return '\n\tВы уже стреляли в эту точку!\n'
 
 
 class BoardWrongShipException(BoardException):
-
     pass
 
 
@@ -193,16 +188,54 @@ class User(Player):
 
 
 class Game:
+    def __init__(self, size=6):
+        self.size = size
+        human = self.random_board()
+        pc = self.random_board()
+        pc.hid = True
+
+        self.ai = AI(pc, human)
+        self.us = User(human, pc)
+
+    @staticmethod
+    def greet():
+        welcome = """                                           
+         __      __    ____   _____    ____   _   __   ____   _ ^ _     _____     ____   _ ^ _
+        |  \    /  |  / _  \ | |_\ \  / /\_\ | | / /  / _  \ | | / |   |  ___|   / _  \ | | / |
+        |   \  /   | | | | | | ____/ | |     | |/ /  | | | | | |/  |   | |____  | | | | | |/  |
+        | |\ \/ /| | | |_| | | |     |  \/ / | |\ \  | |_| | |   / |   |  ___ | | |_| | |   / |
+        |_| \__/ |_|  \____/ |_|      \___/  |_| \_\  \____/ |__/|_|   |_____/   \____/ |__/|_|
+                                              
+        """
+        text = """
+        Вас приветствует игра «Морской бой». Битва продолжается до 
+        тех пор, пока не будет уничтожены все корабли одной из сторон.
+
+        Координаты выстрела вводятся цифрами через пробел:
+        \t координата по горизонтали (X), пробел, координата по вертикали (Y)
+        """
+        marks = """
+        Обозначения:
+            ■ - палуба
+            • - промах / обводка корабля
+            ○ - вода
+            × - попадание
+        """
+        print(welcome)
+        print(text)
+        print(marks)
+        input('\n\tНажмите -= Enter =- для старта')
+
     def try_board(self):
         ship_lens = [3, 2, 2, 1, 1, 1, 1]
         board = Board(size=self.size)
         attempts = 0
-        for l in ship_lens:
+        for lens in ship_lens:
             while True:
                 attempts += 1
                 if attempts > 2000:
                     return None
-                ship = Ship(Dot(randint(0, self.size), randint(0, self.size)), l, randint(0, 1))
+                ship = Ship(Dot(randint(0, self.size), randint(0, self.size)), lens, randint(0, 1))
                 try:
                     board.add_ship(ship)
                     break
@@ -216,3 +249,42 @@ class Game:
         while board is None:
             board = self.try_board()
         return board
+
+    def loop(self):
+        num = 0
+        while True:
+            print("-" * 20)
+            print("Доска пользователя:")
+            print(self.us.board)
+            print("-" * 20)
+            print("Доска компьютера:")
+            print(self.ai.board)
+            print("-" * 20)
+            if num % 2 == 0:
+                print("Ходит пользователь!")
+                repeat = self.us.move()
+            else:
+                print("Ходит компьютер!")
+                repeat = self.ai.move()
+            if repeat:
+                num -= 1
+
+            if self.ai.board.count == 7:
+                print("-" * 20)
+                print("Все корабли противника уничтожены! Пользователь выиграл!")
+                break
+
+            if self.us.board.count == 7:
+                print("-" * 20)
+                print("Все ваши корабли потоплены! Компьютер выиграл!")
+                break
+            num += 1
+
+    def start(self):
+        self.greet()
+        self.loop()
+
+
+if __name__ == '__main__':
+    game = Game()
+    game.start()
