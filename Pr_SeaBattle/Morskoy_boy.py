@@ -1,7 +1,5 @@
 from random import randint
 
-BOARD_SIZE = 6
-SHIPS_TYPES = [3, 2, 2, 1, 1, 1, 1]
 purple = '\033[1;35m'
 reset = '\033[0m'
 blue = '\033[0;34m'
@@ -19,7 +17,7 @@ class Color:
         return self.color + self.text + reset
 
 
-class Sigh(object):
+class Sigh:
 
     empty_cell = Color('○', purple).set_color()
     ship_cell = Color('■', blue).set_color()
